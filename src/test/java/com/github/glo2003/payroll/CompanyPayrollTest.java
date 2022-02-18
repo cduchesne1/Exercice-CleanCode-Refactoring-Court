@@ -2,6 +2,12 @@ package com.github.glo2003.payroll;
 
 import static com.google.common.truth.Truth.assertThat;
 
+import com.github.glo2003.payroll.employee.Employee;
+import com.github.glo2003.payroll.employee.HourlyEmployee;
+import com.github.glo2003.payroll.employee.Role;
+import com.github.glo2003.payroll.employee.SalariedEmployee;
+import com.github.glo2003.payroll.exception.EmployeeIsNotWorkingHereException;
+import com.github.glo2003.payroll.exception.InvalidRaiseException;
 import java.util.List;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,7 +22,6 @@ class CompanyPayrollTest {
     public static final float BIWEEKLY_AMOUNT = 10_000;
     public static final float RAISE = 10;
     public static final float ANOTHER_MONTHLY_AMOUNT = 20_000;
-    public static final int VACATION_DAYS = 12;
     CompanyPayroll company;
     Employee vp;
     Employee eng;
@@ -30,25 +35,25 @@ class CompanyPayrollTest {
     @BeforeEach
     void setUp() {
         company = new CompanyPayroll();
-        vp = new HourlyEmployee("Alice", Role.VICE_PRESIDENT, 25, 100, 35.5f * 2);
-        eng = new SalariedEmployee("Bob", Role.ENGINEER, 4, 1500);
-        manager = new SalariedEmployee("Charlie", Role.MANAGER, 10, 2000);
-        intern1 = new HourlyEmployee("Ernest", Role.INTERN, 10, 5, 50 * 2);
-        intern2 = new HourlyEmployee("Fred", Role.INTERN, 10, 5, 50 * 2);
+        vp = new HourlyEmployee("Alice", Role.VICE_PRESIDENT, 25, 35.5f * 2);
+        eng = new SalariedEmployee("Bob", Role.ENGINEER, 1500);
+        manager = new SalariedEmployee("Charlie", Role.MANAGER, 2000);
+        intern1 = new HourlyEmployee("Ernest", Role.INTERN, 5, 50 * 2);
+        intern2 = new HourlyEmployee("Fred", Role.INTERN, 5, 50 * 2);
 
-        hourlyEmployee = new HourlyEmployee(HOURLY_NAME, Role.ENGINEER, VACATION_DAYS, HOURLY_RATE,
+        hourlyEmployee = new HourlyEmployee(HOURLY_NAME, Role.ENGINEER, HOURLY_RATE,
             HOURLY_AMOUNT);
         salariedEmployee =
-            new SalariedEmployee(SALARIED_NAME, Role.ENGINEER, VACATION_DAYS, BIWEEKLY_AMOUNT);
+            new SalariedEmployee(SALARIED_NAME, Role.ENGINEER, BIWEEKLY_AMOUNT);
         anotherSalariedEmployee =
-            new SalariedEmployee("Yan", Role.MANAGER, VACATION_DAYS, ANOTHER_MONTHLY_AMOUNT);
+            new SalariedEmployee("Yan", Role.MANAGER, ANOTHER_MONTHLY_AMOUNT);
     }
 
     @Test
     void createPendingsCreatesCorrectHourlyPaycheck() {
         company.addEmployee(hourlyEmployee);
 
-        company.createPending();
+        company.createPendingPaychecks();
 
         Paycheck paycheck = company.getPendings().get(0);
         assertThat(paycheck.getTo()).isEqualTo(HOURLY_NAME);
@@ -59,7 +64,7 @@ class CompanyPayrollTest {
     void createPendingsCreatesCorrectSalariedPaycheck() {
         company.addEmployee(salariedEmployee);
 
-        company.createPending();
+        company.createPendingPaychecks();
 
         Paycheck paycheck = company.getPendings().get(0);
         assertThat(paycheck.getTo()).isEqualTo(SALARIED_NAME);
@@ -73,9 +78,9 @@ class CompanyPayrollTest {
         company.addEmployee(manager);
         company.addEmployee(intern1);
         company.addEmployee(intern2);
-        company.createPending();
+        company.createPendingPaychecks();
 
-        company.processPending();
+        company.processPendingPaychecks();
 
         assertThat(company.getPendings().size()).isEqualTo(0);
     }
@@ -121,7 +126,7 @@ class CompanyPayrollTest {
         company.addEmployee(intern1);
         company.addEmployee(intern2);
 
-        company.createPending();
+        company.createPendingPaychecks();
 
         assertThat(company.getPendings().size()).isEqualTo(5);
     }
@@ -134,7 +139,7 @@ class CompanyPayrollTest {
         company.addEmployee(intern1);
         company.addEmployee(intern2);
 
-        company.createPending();
+        company.createPendingPaychecks();
 
         assertThat(company.getPendings().size()).isEqualTo(5);
     }
@@ -143,9 +148,13 @@ class CompanyPayrollTest {
     void hourlyRaiseShouldRaiseHourlySalary() {
         company.addEmployee(hourlyEmployee);
 
-        company.salaryRaise(hourlyEmployee, RAISE);
+        try {
+            company.giveRaise(hourlyEmployee, RAISE);
+        } catch (InvalidRaiseException | EmployeeIsNotWorkingHereException e) {
+            e.printStackTrace();
+        }
 
-        company.createPending();
+        company.createPendingPaychecks();
         Paycheck paycheck = company.getPendings().get(0);
         assertThat(paycheck.getAmount()).isEqualTo((HOURLY_RATE + RAISE) * HOURLY_AMOUNT);
     }
@@ -154,9 +163,13 @@ class CompanyPayrollTest {
     void salariedRaiseShouldRaiseMonthlySalary() {
         company.addEmployee(salariedEmployee);
 
-        company.salaryRaise(salariedEmployee, RAISE);
+        try {
+            company.giveRaise(salariedEmployee, RAISE);
+        } catch (InvalidRaiseException | EmployeeIsNotWorkingHereException e) {
+            e.printStackTrace();
+        }
 
-        company.createPending();
+        company.createPendingPaychecks();
         Paycheck paycheck = company.getPendings().get(0);
         assertThat(paycheck.getAmount()).isEqualTo(BIWEEKLY_AMOUNT + RAISE);
     }
@@ -165,21 +178,22 @@ class CompanyPayrollTest {
     void negativeRaiseShouldThrow() {
         company.addEmployee(eng);
 
-        Assert.assertThrows(RuntimeException.class, () -> company.salaryRaise(eng, -1));
+        Assert.assertThrows(InvalidRaiseException.class, () -> company.giveRaise(eng, -1));
     }
 
     @Test
     void cannotGiveRaiseIfNotInCompany() {
-        Assert.assertThrows(RuntimeException.class, () -> company.salaryRaise(eng, 10));
+        Assert.assertThrows(EmployeeIsNotWorkingHereException.class,
+            () -> company.giveRaise(eng, 10));
     }
 
     @Test
     void avgPayCehck_pending() {
         company.addEmployee(salariedEmployee);
         company.addEmployee(anotherSalariedEmployee);
-        company.createPending();
+        company.createPendingPaychecks();
 
-        float avg = company.averagePaycheckPending();
+        float avg = company.getPendingPaychecksAverage();
 
         assertThat(avg).isEqualTo((BIWEEKLY_AMOUNT + ANOTHER_MONTHLY_AMOUNT) / 2);
     }
@@ -188,7 +202,7 @@ class CompanyPayrollTest {
     void getTotalmoney() {
         company.addEmployee(salariedEmployee);
         company.addEmployee(anotherSalariedEmployee);
-        company.createPending();
+        company.createPendingPaychecks();
 
         float t = company.getTotalMoney();
 

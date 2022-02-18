@@ -30,15 +30,18 @@ class CompanyPayrollTest {
     @BeforeEach
     void setUp() {
         company = new CompanyPayroll();
-        vp = new HourlyEmployee("Alice", "vp", 25, 100, 35.5f * 2);
-        eng = new SalariedEmployee("Bob", "engineer", 4, 1500);
-        manager = new SalariedEmployee("Charlie", "manager", 10, 2000);
-        intern1 = new HourlyEmployee("Ernest", "intern", 10, 5, 50 * 2);
-        intern2 = new HourlyEmployee("Fred", "intern", 10, 5, 50 * 2);
+        vp = new HourlyEmployee("Alice", Role.VICE_PRESIDENT, 25, 100, 35.5f * 2);
+        eng = new SalariedEmployee("Bob", Role.ENGINEER, 4, 1500);
+        manager = new SalariedEmployee("Charlie", Role.MANAGER, 10, 2000);
+        intern1 = new HourlyEmployee("Ernest", Role.INTERN, 10, 5, 50 * 2);
+        intern2 = new HourlyEmployee("Fred", Role.INTERN, 10, 5, 50 * 2);
 
-        hourlyEmployee = new HourlyEmployee(HOURLY_NAME, "engineer", VACATION_DAYS, HOURLY_RATE, HOURLY_AMOUNT);
-        salariedEmployee = new SalariedEmployee(SALARIED_NAME, "engineer", VACATION_DAYS, BIWEEKLY_AMOUNT);
-        anotherSalariedEmployee = new SalariedEmployee("Yan", "manager", VACATION_DAYS, ANOTHER_MONTHLY_AMOUNT);
+        hourlyEmployee = new HourlyEmployee(HOURLY_NAME, Role.ENGINEER, VACATION_DAYS, HOURLY_RATE,
+            HOURLY_AMOUNT);
+        salariedEmployee =
+            new SalariedEmployee(SALARIED_NAME, Role.ENGINEER, VACATION_DAYS, BIWEEKLY_AMOUNT);
+        anotherSalariedEmployee =
+            new SalariedEmployee("Yan", Role.MANAGER, VACATION_DAYS, ANOTHER_MONTHLY_AMOUNT);
     }
 
     @Test

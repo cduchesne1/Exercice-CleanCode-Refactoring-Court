@@ -33,7 +33,7 @@ public class CompanyPayroll {
     List<Employee> es = new ArrayList<>();
     for (int i = 1; i <= employees.size(); ++i) {
 
-      if (employees.get(i - 1).getRole().equals("engineer")) {
+      if (employees.get(i - 1).getRole().equals(Role.ENGINEER)) {
         es.add(employees.get(i - 1));
       }
     }
@@ -43,7 +43,7 @@ public class CompanyPayroll {
   public List<Employee> findManagers() {
     List<Employee> es = new ArrayList<>();
     for (int i = 1; i <= employees.size(); ++i) {
-      if (employees.get(i - 1).getRole().equals("manager")) {
+      if (employees.get(i - 1).getRole().equals(Role.MANAGER)) {
         es.add(employees.get(i - 1));
       }
     }
@@ -53,7 +53,7 @@ public class CompanyPayroll {
   public List<Employee> findVicePresidents() {
     List<Employee> es = new ArrayList<>();
     for (int i = 1; i <= employees.size(); ++i) {
-      if (employees.get(i - 1).getRole().equals("vp")) {
+      if (employees.get(i - 1).getRole().equals(Role.VICE_PRESIDENT)) {
         es.add(employees.get(i - 1));
       }
     }
@@ -63,7 +63,7 @@ public class CompanyPayroll {
   public List<Employee> findInterns() {
     List<Employee> es = new ArrayList<>();
     for (int i = 1; i <= employees.size(); ++i) {
-      if (employees.get(i - 1).getRole().equals("intern")) {
+      if (employees.get(i - 1).getRole().equals(Role.INTERN)) {
         es.add(employees.get(i - 1));
       }
     }

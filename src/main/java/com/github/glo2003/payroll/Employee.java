@@ -3,10 +3,10 @@ package com.github.glo2003.payroll;
 
 public abstract class Employee {
     private String name;
-    private String role;
+    private Role role;
     private int vacation_days;
 
-    public Employee(String name, String role, int vacation_days) {
+    public Employee(String name, Role role, int vacation_days) {
         this.name = name;
         this.role = role;
         this.vacation_days = vacation_days;
@@ -16,7 +16,7 @@ public abstract class Employee {
         return name;
     }
 
-    public String getRole() {
+    public Role getRole() {
         return role;
     }
 

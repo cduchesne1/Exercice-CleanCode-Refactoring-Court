@@ -6,7 +6,7 @@ public class HourlyEmployee extends Employee {
 
     // TODO constructor
 
-    public HourlyEmployee(String name, String role, int vacation_days, float rate, float amount) {
+    public HourlyEmployee(String name, Role role, int vacation_days, float rate, float amount) {
         super(name, role, vacation_days);
         this.rate = rate;
         this.amount = amount;
@@ -16,12 +16,12 @@ public class HourlyEmployee extends Employee {
         return rate;
     }
 
-    public float getAmount() {
-        return amount;
-    }
-
     public void setRate(float rate) {
         this.rate = rate;
+    }
+
+    public float getAmount() {
+        return amount;
     }
 
     @Override

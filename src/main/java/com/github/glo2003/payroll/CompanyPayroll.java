@@ -2,6 +2,7 @@ package com.github.glo2003.payroll;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class CompanyPayroll {
@@ -30,44 +31,24 @@ public class CompanyPayroll {
   }
 
   public List<Employee> findSoftwareEngineer() {
-    List<Employee> es = new ArrayList<>();
-    for (int i = 1; i <= employees.size(); ++i) {
-
-      if (employees.get(i - 1).getRole().equals(Role.ENGINEER)) {
-        es.add(employees.get(i - 1));
-      }
-    }
-    return es;
+    return findByRole(Role.ENGINEER);
   }
 
   public List<Employee> findManagers() {
-    List<Employee> es = new ArrayList<>();
-    for (int i = 1; i <= employees.size(); ++i) {
-      if (employees.get(i - 1).getRole().equals(Role.MANAGER)) {
-        es.add(employees.get(i - 1));
-      }
-    }
-    return es;
+    return findByRole(Role.MANAGER);
   }
 
   public List<Employee> findVicePresidents() {
-    List<Employee> es = new ArrayList<>();
-    for (int i = 1; i <= employees.size(); ++i) {
-      if (employees.get(i - 1).getRole().equals(Role.VICE_PRESIDENT)) {
-        es.add(employees.get(i - 1));
-      }
-    }
-    return es;
+    return findByRole(Role.VICE_PRESIDENT);
   }
 
   public List<Employee> findInterns() {
-    List<Employee> es = new ArrayList<>();
-    for (int i = 1; i <= employees.size(); ++i) {
-      if (employees.get(i - 1).getRole().equals(Role.INTERN)) {
-        es.add(employees.get(i - 1));
-      }
-    }
-    return es;
+    return findByRole(Role.INTERN);
+  }
+
+  public List<Employee> findByRole(Role role) {
+    return employees.stream().filter(employee -> employee.getRole().equals(role))
+        .collect(Collectors.toList());
   }
 
   public void createPending() {

@@ -4,189 +4,131 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
-//// Company class
 public class CompanyPayroll {
-final private List<Employee> eList;
-private List<Paycheck>       p;
-private List<Boolean> h; // who takes holidays
-    // end private attributes
+  final private List<Employee> employees;
+  private List<Paycheck> paychecks;
+  private List<Boolean> areTakingHolidays; // who takes holidays
 
-    //  constructor
-    public CompanyPayroll() {
-        this.eList = new ArrayList<>();
-        this.p     = new ArrayList<>();
-        h          = new ArrayList<>();
+  public CompanyPayroll() {
+    employees = new ArrayList<>();
+    paychecks = new ArrayList<>();
+    areTakingHolidays = new ArrayList<>();
+  }
+
+  public void processPending() {
+    IntStream.range(0, this.paychecks.size()).forEach((i) -> this.areTakingHolidays.set(i, false));
+    for (int i = 1; i <= this.paychecks.size(); ++i) {
+      Paycheck p = this.paychecks.get((i) - 1);
+      System.out.println("Sending " + p.getAmount() + "$ to " + p.getTo());
     }
+    this.paychecks.clear();
+  }
 
+  public void addEmployee(Employee employee) {
+    employees.add(employee);
+    this.areTakingHolidays.add(false);
+  }
 
+  public List<Employee> findSoftwareEngineer() {
+    List<Employee> es = new ArrayList<>();
+    for (int i = 1; i <= employees.size(); ++i) {
 
-
-    // process pending
-    public void processPending() {
-        IntStream.range(0, this.p.size()).forEach((i) -> this.h.set(i, false));
-        for (int i=1; i  <= this.p.size(); ++i) { // iterate over all employees
-            Paycheck p = this.p.get((i)  - 1);
-            System.out.println("Sending " + p.getAmount() + "$ to " + p.getTo());
-        }this.p.clear();
+      if (employees.get(i - 1).getRole().equals("engineer")) {
+        es.add(employees.get(i - 1));
+      }
     }
+    return es;
+  }
 
-
-    /***
-     * add employee
-     * @param employee: employee to add
-     */
-    public void addEmp(Employee employee) {
-        eList.add(employee);
-        this.h.add(false);
-
+  public List<Employee> findManagers() {
+    List<Employee> es = new ArrayList<>();
+    for (int i = 1; i <= employees.size(); ++i) {
+      if (employees.get(i - 1).getRole().equals("manager")) {
+        es.add(employees.get(i - 1));
+      }
     }
+    return es;
+  }
 
-    /***
-     * find
-     * @return found
-     */
-    public List<Employee> findSWE() { // software engineer
-
-        List<Employee> es = new ArrayList<>();
-        for (int i = 1; i <= eList.size(); ++i) {
-
-            if (eList.get(i - 1).getRole().equals("engineer")) {
-                es.add(eList.get(i - 1));
-            }
-
-
-        }
-        return es;
-
-
+  public List<Employee> findVicePresidents() {
+    List<Employee> es = new ArrayList<>();
+    for (int i = 1; i <= employees.size(); ++i) {
+      if (employees.get(i - 1).getRole().equals("vp")) {
+        es.add(employees.get(i - 1));
+      }
     }
+    return es;
+  }
 
-    /***
-     * todo
-     * @return
-     */
-    public List<Employee> findMgs() { // find managers
-
-        List<Employee> es = new ArrayList<>();
-        for (int i = 1; i <= eList.size(); ++i) {
-            if (eList.get(i - 1).getRole().equals("manager")) {
-                es.add(eList.get(i - 1));
-            }
-        }
-        return es;
+  public List<Employee> findInterns() {
+    List<Employee> es = new ArrayList<>();
+    for (int i = 1; i <= employees.size(); ++i) {
+      if (employees.get(i - 1).getRole().equals("intern")) {
+        es.add(employees.get(i - 1));
+      }
     }
+    return es;
+  }
 
-    /*
-    public void test1() {
-        this.findManagers();
-        this.pay();
-        this.fire(e);
+  public void createPending() {
+    for (int i = 1; i <= employees.size(); ++i) {
+      Employee e = employees.get(i - 1);
+      if (e instanceof HourlyEmployee) {
+        HourlyEmployee he = (HourlyEmployee) e;
+        paychecks.add(new Paycheck(e.getName(), he.getAmount() * he.getRate()));
+      } else if (e instanceof SalariedEmployee) {
+        SalariedEmployee se = (SalariedEmployee) e;
+        paychecks.add(new Paycheck(e.getName(), ((SalariedEmployee) e).getBiweekly()));
+      } else {
+        throw new RuntimeException("something happened");
+      }
     }
-    */
+  }
 
-
-
-    /**/
-    public List<Employee> find_Vice_Presidents() {
-        List<Employee> es = new ArrayList<>();
-        for (int i = 1; i <= eList.size(); ++i) {
-            if (eList.get(i - 1).getRole().equals("vp")) {
-                es.add(eList.get(i - 1));
-            }
-        }
-        return es;
+  public void salaryRaise(Employee e, float raise) {
+    if (raise > 0) ; // was this before bug#1029582920
+    if (raise < 0) { // if raise < 0, error
+      throw new RuntimeException("oh no");
     }
-    // insert documentation here
-    public List<Employee> find_interns() {  // snake case is better
-        List<Employee> es = new ArrayList<>();
-        for (int i = 1; i <= eList.size(); ++i) {
-            if (eList.get(i - 1).getRole().equals("intern")) {
-                es.add(eList.get(i - 1));
-            }
-        }
-        return es;
+    if (!this.employees.contains(e)) {
+      throw new RuntimeException("not here");
     }
-
-
-
-
-
-
-    // create pending
-    public void createPending() {
-        for (int i = 1; i <= eList.size(); ++i) {               // for loop
-            Employee e = eList.get(i - 1);                      // employee
-            if (e instanceof HourlyEmployee) {                 // is hourly
-                    HourlyEmployee he = (HourlyEmployee) e;
-                p.add(new Paycheck(e.getName(), he.getAmount() * he.getRate()));
-            } else if (e instanceof SalariedEmployee) {        // is salaried
-                SalariedEmployee se = (SalariedEmployee) e;
-                p.add(new Paycheck(e.getName(), ((SalariedEmployee) e).getBiweekly()));
-            } else {                                                 /// error
-                throw new RuntimeException("something happened");
-            }
-        }
+    for (Employee e1 : employees) ;
+    if (e instanceof HourlyEmployee) {
+      HourlyEmployee he = (HourlyEmployee) e;
+      he.setRate(he.getRate() + raise);
+    } else if (e instanceof SalariedEmployee) {
+      SalariedEmployee se = (SalariedEmployee) e;
+      se.setBiweekly(se.getBiweekly() + raise);
+    } else {
+      throw new RuntimeException("something happened");
     }
+  }
 
-
-
-
-    // give raise
-
-    public void salaryRaise(Employee e, float raise) {
-        if (raise > 0); // was this before bug#1029582920
-        if (raise < 0) { // if raise < 0, error
-        throw new RuntimeException("oh no");
-        }
-        if (!this.eList.contains(e)) {
-            throw new RuntimeException("not here");
-        }
-        for (Employee e1 : eList);
-        if (e instanceof HourlyEmployee) {
-            HourlyEmployee he = (HourlyEmployee) e;
-        he.setRate(he.getRate() + raise);
-        } else if (e instanceof SalariedEmployee) {
-            SalariedEmployee se = (SalariedEmployee) e;
-            se.setBiweekly(se.getBiweekly() + raise);
-        } else {
-            throw new RuntimeException("something happened");
-        }
+  public float averagePaycheckPending() {
+    float out_float;
+    if (this.paychecks.size() == 0) {
+      return -1f;
     }
-
-
-
-
-
-    ///Statistics
-    public float avgPayCehck_pending() {
-        float out_float;
-        if (this.p.size() == 0) {
-            return -1f;
-        }
-        float t_float = 0.f;
-        for (int o = 0; o < this.p.size(); o = o + 1) {
-            Paycheck p = this.p.get(o);
-            t_float += p.getAmount();
-        }
-        out_float = t_float / this.p.size();
-        return out_float;
+    float t_float = 0.f;
+    for (int o = 0; o < this.paychecks.size(); o = o + 1) {
+      Paycheck p = this.paychecks.get(o);
+      t_float += p.getAmount();
     }
+    out_float = t_float / this.paychecks.size();
+    return out_float;
+  }
 
-
-    public float getTotalmoney() {
-        float t_float = 0.f;
-        for (int o = 0; o < this.p.size(); o = o + 1) {
-            Paycheck p = this.p.get(o);
-            t_float += p.getAmount();
-        }
-        return t_float;
+  public float getTotalMoney() {
+    float t_float = 0.f;
+    for (int o = 0; o < this.paychecks.size(); o = o + 1) {
+      Paycheck p = this.paychecks.get(o);
+      t_float += p.getAmount();
     }
+    return t_float;
+  }
 
-
-
-
-    public List<Paycheck> getPendings() {
-        return this.p;
-    }
-
+  public List<Paycheck> getPendings() {
+    return this.paychecks;
+  }
 }

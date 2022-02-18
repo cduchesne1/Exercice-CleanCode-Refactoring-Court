@@ -1,12 +1,11 @@
 package com.github.glo2003.payroll;
 
+import static com.google.common.truth.Truth.assertThat;
+
+import java.util.List;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.List;
-
-import static com.google.common.truth.Truth.assertThat;
 
 class CompanyPayrollTest {
 
@@ -44,7 +43,7 @@ class CompanyPayrollTest {
 
     @Test
     void createPendingsCreatesCorrectHourlyPaycheck() {
-        company.addEmp(hourlyEmployee);
+        company.addEmployee(hourlyEmployee);
 
         company.createPending();
 
@@ -55,7 +54,7 @@ class CompanyPayrollTest {
 
     @Test
     void createPendingsCreatesCorrectSalariedPaycheck() {
-        company.addEmp(salariedEmployee);
+        company.addEmployee(salariedEmployee);
 
         company.createPending();
 
@@ -66,11 +65,11 @@ class CompanyPayrollTest {
 
     @Test
     void processPending_shouldRemovePendingPaychecks() {
-        company.addEmp(vp);
-        company.addEmp(eng);
-        company.addEmp(manager);
-        company.addEmp(intern1);
-        company.addEmp(intern2);
+        company.addEmployee(vp);
+        company.addEmployee(eng);
+        company.addEmployee(manager);
+        company.addEmployee(intern1);
+        company.addEmployee(intern2);
         company.createPending();
 
         company.processPending();
@@ -80,44 +79,44 @@ class CompanyPayrollTest {
 
     @Test
     void findSWE_shouldReturnSoftwareEngineers() {
-        company.addEmp(eng);
+        company.addEmployee(eng);
 
-        List<Employee> es = company.findSWE();
+        List<Employee> es = company.findSoftwareEngineer();
         assertThat(es).containsExactly(eng);
     }
 
     @Test
     void findMgs_shouldReturnManagers() {
-        company.addEmp(manager);
+        company.addEmployee(manager);
 
-        List<Employee> es = company.findMgs();
+        List<Employee> es = company.findManagers();
         assertThat(es).containsExactly(manager);
     }
 
     @Test
     void find_Vice_Presidents_shouldReturnVicePresidents() {
-        company.addEmp(vp);
+        company.addEmployee(vp);
 
-        List<Employee> es = company.find_Vice_Presidents();
+        List<Employee> es = company.findVicePresidents();
         assertThat(es).containsExactly(vp);
     }
 
     @Test
     void find_interns_shouldReturnInterns() {
-        company.addEmp(intern1);
-        company.addEmp(intern2);
+        company.addEmployee(intern1);
+        company.addEmployee(intern2);
 
-        List<Employee> es = company.find_interns();
+        List<Employee> es = company.findInterns();
         assertThat(es).containsExactly(intern1, intern2);
     }
 
     @Test
     void createPending_shouldCreatePendingPaycheck() {
-        company.addEmp(vp);
-        company.addEmp(eng);
-        company.addEmp(manager);
-        company.addEmp(intern1);
-        company.addEmp(intern2);
+        company.addEmployee(vp);
+        company.addEmployee(eng);
+        company.addEmployee(manager);
+        company.addEmployee(intern1);
+        company.addEmployee(intern2);
 
         company.createPending();
 
@@ -126,11 +125,11 @@ class CompanyPayrollTest {
 
     @Test
     void hourlyEmployee() {
-        company.addEmp(vp);
-        company.addEmp(eng);
-        company.addEmp(manager);
-        company.addEmp(intern1);
-        company.addEmp(intern2);
+        company.addEmployee(vp);
+        company.addEmployee(eng);
+        company.addEmployee(manager);
+        company.addEmployee(intern1);
+        company.addEmployee(intern2);
 
         company.createPending();
 
@@ -139,7 +138,7 @@ class CompanyPayrollTest {
 
     @Test
     void hourlyRaiseShouldRaiseHourlySalary() {
-        company.addEmp(hourlyEmployee);
+        company.addEmployee(hourlyEmployee);
 
         company.salaryRaise(hourlyEmployee, RAISE);
 
@@ -150,7 +149,7 @@ class CompanyPayrollTest {
 
     @Test
     void salariedRaiseShouldRaiseMonthlySalary() {
-        company.addEmp(salariedEmployee);
+        company.addEmployee(salariedEmployee);
 
         company.salaryRaise(salariedEmployee, RAISE);
 
@@ -161,7 +160,7 @@ class CompanyPayrollTest {
 
     @Test
     void negativeRaiseShouldThrow() {
-        company.addEmp(eng);
+        company.addEmployee(eng);
 
         Assert.assertThrows(RuntimeException.class, () -> company.salaryRaise(eng, -1));
     }
@@ -173,22 +172,22 @@ class CompanyPayrollTest {
 
     @Test
     void avgPayCehck_pending() {
-        company.addEmp(salariedEmployee);
-        company.addEmp(anotherSalariedEmployee);
+        company.addEmployee(salariedEmployee);
+        company.addEmployee(anotherSalariedEmployee);
         company.createPending();
 
-        float avg = company.avgPayCehck_pending();
+        float avg = company.averagePaycheckPending();
 
         assertThat(avg).isEqualTo((BIWEEKLY_AMOUNT + ANOTHER_MONTHLY_AMOUNT) / 2);
     }
 
     @Test
     void getTotalmoney() {
-        company.addEmp(salariedEmployee);
-        company.addEmp(anotherSalariedEmployee);
+        company.addEmployee(salariedEmployee);
+        company.addEmployee(anotherSalariedEmployee);
         company.createPending();
 
-        float t = company.getTotalmoney();
+        float t = company.getTotalMoney();
 
         assertThat(t).isEqualTo(BIWEEKLY_AMOUNT + ANOTHER_MONTHLY_AMOUNT);
     }

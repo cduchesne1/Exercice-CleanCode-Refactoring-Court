@@ -1,10 +1,12 @@
 package com.github.glo2003;
 
 import com.github.glo2003.payroll.CompanyPayroll;
+import com.github.glo2003.payroll.employee.ContractEmployee;
 import com.github.glo2003.payroll.employee.Employee;
 import com.github.glo2003.payroll.employee.HourlyEmployee;
 import com.github.glo2003.payroll.employee.Role;
 import com.github.glo2003.payroll.employee.SalariedEmployee;
+import java.util.LinkedList;
 
 public class Main {
 
@@ -16,12 +18,19 @@ public class Main {
         Employee e3 = new SalariedEmployee("Charlie", Role.MANAGER, 2000);
         Employee e4 = new HourlyEmployee("Ernest", Role.INTERN, 5, 50 * 4);
         Employee e5 = new HourlyEmployee("Fred", Role.INTERN, 5, 50 * 4);
+        LinkedList<Float> payouts = new LinkedList<Float>() {{
+            add(100f);
+            add(200f);
+            add(300f);
+        }};
+        Employee e6 = new ContractEmployee("Joe", Role.MANAGER, payouts);
 
         companyPayroll.addEmployee(e1);
         companyPayroll.addEmployee(e2);
         companyPayroll.addEmployee(e3);
         companyPayroll.addEmployee(e4);
         companyPayroll.addEmployee(e5);
+        companyPayroll.addEmployee(e6);
 
         System.out.println("----- Listing employees -----");
         companyPayroll.findVicePresidents().forEach(System.out::println);

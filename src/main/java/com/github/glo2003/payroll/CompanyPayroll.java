@@ -4,6 +4,7 @@ import com.github.glo2003.payroll.employee.Employee;
 import com.github.glo2003.payroll.employee.Role;
 import com.github.glo2003.payroll.exception.EmployeeIsNotWorkingHereException;
 import com.github.glo2003.payroll.exception.InvalidRaiseException;
+import com.github.glo2003.payroll.exception.NoEmployeeException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -68,7 +69,10 @@ public class CompanyPayroll {
     employee.giveRaise(raise);
   }
 
-  public float getPendingPaychecksAverage() {
+  public float getPendingPaychecksAverage() throws NoEmployeeException {
+    if (pendingPaychecks.isEmpty()) {
+      throw new NoEmployeeException();
+    }
     float totalMoney = getTotalMoney();
     return totalMoney / pendingPaychecks.size();
   }

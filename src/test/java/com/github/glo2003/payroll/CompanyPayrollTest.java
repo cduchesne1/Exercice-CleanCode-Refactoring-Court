@@ -8,6 +8,7 @@ import com.github.glo2003.payroll.employee.Role;
 import com.github.glo2003.payroll.employee.SalariedEmployee;
 import com.github.glo2003.payroll.exception.EmployeeIsNotWorkingHereException;
 import com.github.glo2003.payroll.exception.InvalidRaiseException;
+import com.github.glo2003.payroll.exception.NoEmployeeException;
 import java.util.List;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
@@ -145,14 +146,11 @@ class CompanyPayrollTest {
     }
 
     @Test
-    void hourlyRaiseShouldRaiseHourlySalary() {
+    void hourlyRaiseShouldRaiseHourlySalary()
+        throws EmployeeIsNotWorkingHereException, InvalidRaiseException {
         company.addEmployee(hourlyEmployee);
 
-        try {
-            company.giveRaise(hourlyEmployee, RAISE);
-        } catch (InvalidRaiseException | EmployeeIsNotWorkingHereException e) {
-            e.printStackTrace();
-        }
+        company.giveRaise(hourlyEmployee, RAISE);
 
         company.createPendingPaychecks();
         Paycheck paycheck = company.getPendings().get(0);
@@ -160,14 +158,11 @@ class CompanyPayrollTest {
     }
 
     @Test
-    void salariedRaiseShouldRaiseMonthlySalary() {
+    void salariedRaiseShouldRaiseMonthlySalary()
+        throws EmployeeIsNotWorkingHereException, InvalidRaiseException {
         company.addEmployee(salariedEmployee);
 
-        try {
-            company.giveRaise(salariedEmployee, RAISE);
-        } catch (InvalidRaiseException | EmployeeIsNotWorkingHereException e) {
-            e.printStackTrace();
-        }
+        company.giveRaise(salariedEmployee, RAISE);
 
         company.createPendingPaychecks();
         Paycheck paycheck = company.getPendings().get(0);
@@ -188,7 +183,7 @@ class CompanyPayrollTest {
     }
 
     @Test
-    void avgPayCehck_pending() {
+    void avgPayCehck_pending() throws NoEmployeeException {
         company.addEmployee(salariedEmployee);
         company.addEmployee(anotherSalariedEmployee);
         company.createPendingPaychecks();
